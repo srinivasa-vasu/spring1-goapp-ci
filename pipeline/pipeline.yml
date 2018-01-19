@@ -43,7 +43,7 @@ resources:
 - name: git-spring1-ci
   type: git
   source:
-    uri: https://github.com/virtmerlin/spring1-goapp-ci
+    uri: https://github.com/srinivasa-vasu/spring1-goapp-ci.git
     branch: master
 
 - name: git-go-http
