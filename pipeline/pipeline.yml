@@ -53,7 +53,8 @@ resources:
   source:
     username: {{HARBOR_USERNAME}}
     password: {{HARBOR_PASSWORD}}
-    repository: {{APP_REPO_IMAGE}}
+    repository: {{REPO_URL}}
+    tag: 0.1
     insecure_registries:
     - {{REPO_INSECURE_REGISTRY}}
     ca_certs: {{HARBOR_CA_CERT}}
@@ -88,30 +89,25 @@ jobs:
   public: true
   serial: true
   plan:
-  - get: git-go-http
-    trigger: true
+  - aggregate:
+    - get: git-spring1-ci
+      trigger: true
   - put: harbor-image
-    params:
-      build: git-go-http
 
 - name: cve-scan-harbor-image
   plan:
-  - aggregate:
-    - get: git-spring1-ci
-    - get: harbor-image
-      passed: [build-docker-image]
-      trigger: true
+  - get: harbor-image
+    passed: [build-docker-image]
+    trigger: true
   - task: clair-scan-image
     file: git-spring1-ci/tasks/clair-scan-image/task.yml
     params: *clair_scan_params
 
 - name: sign-harbor-image
   plan:
-  - aggregate:
-    - get: git-spring1-ci
-    - get: harbor-image
-      passed: [cve-scan-harbor-image]
-      trigger: false
+  - get: harbor-image
+    passed: [cve-scan-harbor-image]
+    trigger: true
   - task: notary-sign-image
     privileged: true
     file: git-spring1-ci/tasks/notary-sign-image/task.yml
@@ -126,8 +122,8 @@ jobs:
     trigger: true
   - put: kubernetes-deployment
     params:
-      image_name: {{APP_REPO_IMAGE}}
-      #image_tag: latest
+      image_name: {{REPO_URL}}
+      image_tag: 0.1
       port: 8080
   - put: kubernetes-service
     params:
