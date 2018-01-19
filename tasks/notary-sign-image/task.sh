@@ -3,29 +3,17 @@ set -e
 
 source /opt/resource/common.sh
 
-export DOCKER_CONTENT_TRUST_SERVER="https://$HARBOR_URL:4443"
-export DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE="$NOTARY_PASS_1"
-export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE="$NOTARY_PASS_2"
 
 function fn_decode {
   echo $1 | base64 -d
 }
 
 
-function fn_notary_keys {
-  mkdir -p /root/.docker/trust/private
-  echo $NOTARY_KEY_1 | base64 -d > /root/.docker/trust/private/$NOTARY_FILE_1
-  echo $NOTARY_KEY_2 | base64 -d > /root/.docker/trust/private/$NOTARY_FILE_2
-}
-
 mkdir -p /etc/docker/certs.d/$HARBOR_URL
 fn_decode $HARBOR_CA_CERT > "/etc/docker/certs.d/$HARBOR_URL/ca.crt"
-#fn_decode $HARBOR_CA_KEY > "/etc/docker/certs.d/$HARBOR_URL/ca.key"
 echo "{\"insecure-registries\" : [\"$HARBOR_URL\"]}" > /etc/docker/daemon.json
 mkdir -p "$HOME/.docker/tls/$HARBOR_URL:4443"
 fn_decode $HARBOR_CA_CERT > "$HOME/.docker/tls/$HARBOR_URL:4443/ca.crt"
-#fn_decode $HARBOR_CA_CERT > "$HOME/.docker/tls/$HARBOR_URL:4443/ca.cert"
-#fn_decode $HARBOR_CA_KEY > "$HOME/.docker/tls/$HARBOR_URL:4443/ca.key"
 
 start_docker
 
@@ -36,11 +24,8 @@ docker images
 
 export DOCKER_CONTENT_TRUST=1
 export DOCKER_CONTENT_TRUST_SERVER="https://$HARBOR_URL:4443"
-export DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE="$NOTARY_PASS_1"
-export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE="$NOTARY_PASS_2"
+export DOCKER_CONTENT_TRUST_SERVER="https://$HARBOR_URL:4443"
+export DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE="$NOTARY_ROOT_PASS"
+export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE="$NOTARY_REPO_PASS"
 
-echo ">>>>>>>>>>>>>>>"
-echo $DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE
-echo $DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE
-#fn_notary_keys
 docker push $HARBOR_IMAGE 2>/dev/null

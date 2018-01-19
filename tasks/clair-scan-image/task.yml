@@ -15,6 +15,7 @@ params:
   HARBOR_USERNAME:
   HARBOR_PASSWORD:
 
+
 inputs:
   - name: git-spring1-ci
 

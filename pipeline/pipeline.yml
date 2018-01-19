@@ -1,38 +1,32 @@
 ---
 clair_scan_params: &clair_scan_params
-  CLAIR_URL: {{clair_url}}
-  CLAIR_PORT: {{clair_port}}
-  CLAIR_HEALTH_PORT: {{clair_health_port}}
-  CLAIR_IMAGE: {{clair_image}}
-  CLAIR_INSECURE_REGISTRY: {{clair_insecure_registry}}
-  HARBOR_USERNAME: {{harbor_username}}
-  HARBOR_PASSWORD: {{harbor_password}}
+  CLAIR_URL: {{HARBOR_URL}}
+  CLAIR_PORT: {{CLAIR_PORT}}
+  CLAIR_HEALTH_PORT: {{CLAIR_HEALTH_PORT}}
+  CLAIR_IMAGE: {{APP_IMAGE}}
+  CLAIR_INSECURE_REGISTRY: {{REPO_INSECURE_REGISTRY}}
+  HARBOR_USERNAME: {{HARBOR_USERNAME}}
+  HARBOR_PASSWORD: {{HARBOR_PASSWORD}}
 
 notary_sign_params: &notary_sign_params
-  HARBOR_USERNAME: {{harbor_username}}
-  HARBOR_URL: {{harbor_url}}
-  HARBOR_IMAGE: {{harbor_image}}
-  HARBOR_PASSWORD: {{harbor_password}}
-  HARBOR_CA_CERT: {{harbor_ca_cert}}
-  HARBOR_CA_KEY: {{harbor_ca_key}}
-  NOTARY_FILE_1: {{notary_file_1}}
-  NOTARY_KEY_1: {{notary_key_1}}
-  NOTARY_FILE_2: {{notary_file_2}}
-  NOTARY_KEY_2: {{notary_key_2}}
-  NOTARY_PASS_1: {{notary_pass_1}}
-  NOTARY_PASS_2: {{notary_pass_2}}
-groups:
+  HARBOR_URL: {{HARBOR_URL}}
+  HARBOR_IMAGE: {{APP_REPO_IMAGE}}
+  HARBOR_USERNAME: {{HARBOR_USERNAME}}
+  HARBOR_PASSWORD: {{HARBOR_PASSWORD}}
+  HARBOR_CA_CERT: {{HARBOR_CA_CERT}}
+  NOTARY_ROOT_PASS: {{NOTARY_ROOT_PASS}}
+  NOTARY_REPO_PASS: {{NOTARY_REPO_PASS}}
 
-- name: Image-Pipeline
+groups:
+- name: HARBOR-FLOW
   jobs:
   - build-docker-image
   - cve-scan-harbor-image
   - sign-harbor-image
 
-- name: Kubernetes-Deployment
+- name: K8S-FLOW
   jobs:
   - k8s-deployment
-
 
 
 resource_types:
@@ -57,28 +51,21 @@ resources:
 - name: harbor-image
   type: docker-image
   source:
-    username: {{harbor_username}}
-    password: {{harbor_password}}
-    repository: {{harbor_repository}}
+    username: {{HARBOR_USERNAME}}
+    password: {{HARBOR_PASSWORD}}
+    repository: {{APP_REPO_IMAGE}}
     insecure_registries:
-    - {{harbor_insecure_registry}}
-    ca_certs: {{harbor_ca_cert}}
-    tag: 0.1
+    - {{REPO_INSECURE_REGISTRY}}
+    ca_certs: {{HARBOR_CA_CERT}}
     
-#    - domain: 10.190.63.153:443
-#      cert: |
-#        -----BEGIN CERTIFICATE-----
-#        some cert...
-#        -----END CERTIFICATE-----
-
 - name: kubernetes-deployment
   type: kubernetes
   source:
-    cluster_url: {{k8s_cluster_url}}
-    namespace: {{k8s_namespace}}
-    cluster_ca: {{k8s_ca_base64}}
-    admin_user: {{k8s_admin_user}}
-    admin_token: {{k8s_admin_token}}
+    cluster_url: {{K8S_CLUSTER_URL}}
+    namespace: {{K8S_NAMESPACE}}
+    cluster_ca: {{K8S_CA_BASE64}}
+    admin_user: {{K8S_ADMIN_USER}}
+    admin_token: {{K8S_ADMIN_TOKEN}}
     resource_type: deployment
     resource_name: go-http
     resource_port: 8080
@@ -87,11 +74,11 @@ resources:
 - name: kubernetes-service
   type: kubernetes
   source:
-    cluster_url: {{k8s_cluster_url}}
-    namespace: {{k8s_namespace}}
-    cluster_ca: {{k8s_ca_base64}}
-    admin_user: {{k8s_admin_user}}
-    admin_token: {{k8s_admin_token}}
+    cluster_url: {{K8S_CLUSTER_URL}}
+    namespace: {{K8S_NAMESPACE}}
+    cluster_ca: {{K8S_CA_BASE64}}
+    admin_user: {{K8S_ADMIN_USER}}
+    admin_token: {{K8S_ADMIN_TOKEN}}
     resource_type: service
     resource_name: svc-go-http
     overwrite: true
@@ -139,8 +126,8 @@ jobs:
     trigger: true
   - put: kubernetes-deployment
     params:
-      image_name: {{clair_image}}
-      image_tag: latest
+      image_name: {{APP_REPO_IMAGE}}
+      #image_tag: latest
       port: 8080
   - put: kubernetes-service
     params:
