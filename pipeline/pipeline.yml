@@ -92,7 +92,11 @@ jobs:
   - aggregate:
     - get: git-spring1-ci
       trigger: true
+    - get: git-go-http
+      trigger: true
   - put: harbor-image
+    params:
+      build: git-go-http
 
 - name: cve-scan-harbor-image
   plan:
