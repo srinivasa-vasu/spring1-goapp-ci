@@ -100,18 +100,22 @@ jobs:
 
 - name: cve-scan-harbor-image
   plan:
-  - get: harbor-image
-    passed: [build-docker-image]
-    trigger: true
+  - aggregate:
+    - get: git-spring1-ci
+    - get: harbor-image
+      passed: [build-docker-image]
+      trigger: true
   - task: clair-scan-image
     file: git-spring1-ci/tasks/clair-scan-image/task.yml
     params: *clair_scan_params
 
 - name: sign-harbor-image
   plan:
-  - get: harbor-image
-    passed: [cve-scan-harbor-image]
-    trigger: true
+  - aggregate:
+    - get: git-spring1-ci  
+    - get: harbor-image
+      passed: [cve-scan-harbor-image]
+      trigger: true
   - task: notary-sign-image
     privileged: true
     file: git-spring1-ci/tasks/notary-sign-image/task.yml
