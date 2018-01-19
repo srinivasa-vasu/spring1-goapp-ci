@@ -19,12 +19,12 @@ function fn_notary_keys {
 }
 
 mkdir -p /etc/docker/certs.d/$HARBOR_URL
-fn_decode $HARBOR_CA_CERT > "/etc/docker/certs.d/$HARBOR_URL/ca.cert"
+fn_decode $HARBOR_CA_CERT > "/etc/docker/certs.d/$HARBOR_URL/ca.crt"
 #fn_decode $HARBOR_CA_KEY > "/etc/docker/certs.d/$HARBOR_URL/ca.key"
 echo "{\"insecure-registries\" : [\"$HARBOR_URL\"]}" > /etc/docker/daemon.json
 mkdir -p "$HOME/.docker/tls/$HARBOR_URL:4443"
-#fn_decode $HARBOR_CA_CERT > "$HOME/.docker/tls/$HARBOR_URL:4443/ca.crt"
-fn_decode $HARBOR_CA_CERT > "$HOME/.docker/tls/$HARBOR_URL:4443/ca.cert"
+fn_decode $HARBOR_CA_CERT > "$HOME/.docker/tls/$HARBOR_URL:4443/ca.crt"
+#fn_decode $HARBOR_CA_CERT > "$HOME/.docker/tls/$HARBOR_URL:4443/ca.cert"
 #fn_decode $HARBOR_CA_KEY > "$HOME/.docker/tls/$HARBOR_URL:4443/ca.key"
 
 start_docker
