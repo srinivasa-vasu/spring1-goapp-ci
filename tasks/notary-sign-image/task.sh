@@ -35,5 +35,5 @@ docker pull $HARBOR_IMAGE
 docker images
 
 export DOCKER_CONTENT_TRUST=1
-fn_notary_keys
+#fn_notary_keys
 docker push $HARBOR_IMAGE 2>/dev/null
