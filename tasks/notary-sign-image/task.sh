@@ -15,7 +15,7 @@ function fn_decode {
 function fn_notary_keys {
   mkdir -p /root/.docker/trust/private
   echo $NOTARY_KEY_1 | base64 -d > /root/.docker/trust/private/$NOTARY_FILE_1
-  // echo $NOTARY_KEY_2 | base64 -d > /root/.docker/trust/private/$NOTARY_FILE_2
+  echo $NOTARY_KEY_2 | base64 -d > /root/.docker/trust/private/$NOTARY_FILE_2
 }
 
 mkdir -p /etc/docker/certs.d/$HARBOR_URL
