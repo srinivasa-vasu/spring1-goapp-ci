@@ -129,12 +129,8 @@ jobs:
   - put: kubernetes-deployment
     params:
       image_name: {{REPO_URL}}
-      image_tag: 0.1
-      port: 8080
+      image_tag: "0.1"
   - put: kubernetes-service
     params:
-      service_name: svc-go-http
-      service_type: NodePort
-      deployment_name: go-http
-      service_port: 30001
-      target_port: 8080
+      image_name: {{REPO_URL}}
+      image_tag: "0.1"
