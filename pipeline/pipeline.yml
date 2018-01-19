@@ -60,12 +60,9 @@ resources:
     repository: {{harbor_repository}}
     insecure_registries:
     - {{harbor_insecure_registry}}
-#    ca_certs:
-#    - domain: harbor-registry.vmwdri.local:443
-#      cert: |
-#        -----BEGIN CERTIFICATE-----
-#        some cert...
-#        -----END CERTIFICATE-----
+    ca_certs: {{harbor_ca_cert}}
+    tag: 0.1
+    
 #    - domain: 10.190.63.153:443
 #      cert: |
 #        -----BEGIN CERTIFICATE-----
@@ -136,7 +133,7 @@ jobs:
   serial: true
   plan:
   - get: harbor-image
-    passed: [sign-harbor-image]
+    passed: [cve-scan-harbor-image]
     trigger: true
   - put: kubernetes-deployment
     params:
