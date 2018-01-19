@@ -4,8 +4,8 @@ set -e
 source /opt/resource/common.sh
 
 export DOCKER_CONTENT_TRUST_SERVER="https://$HARBOR_URL:4443"
-export DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE="u7pEQcGoebUHm6LHe6"
-export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE="l7pEQcTKJjUHm6Lpe4"
+export DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE="$NOTARY_PASS_1"
+export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE="$NOTARY_PASS_2"
 
 function fn_decode {
   echo $1 | base64 -d
@@ -15,7 +15,7 @@ function fn_decode {
 function fn_notary_keys {
   mkdir -p /root/.docker/trust/private
   echo $NOTARY_KEY_1 | base64 -d > /root/.docker/trust/private/$NOTARY_FILE_1
-  // echo $NOTARY_KEY_2 | base64 -d > /root/.docker/trust/private/$NOTARY_FILE_2
+  echo $NOTARY_KEY_2 | base64 -d > /root/.docker/trust/private/$NOTARY_FILE_2
 }
 
 mkdir -p /etc/docker/certs.d/$HARBOR_URL

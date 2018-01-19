@@ -20,6 +20,8 @@ params:
   NOTARY_KEY_1:
   NOTARY_FILE_2:
   NOTARY_KEY_2:
+  NOTARY_PASS_1:
+  NOTARY_PASS_2:
 
 inputs:
   - name: git-spring1-ci

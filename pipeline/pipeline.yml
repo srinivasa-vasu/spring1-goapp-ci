@@ -19,6 +19,8 @@ notary_sign_params: &notary_sign_params
   NOTARY_KEY_1: {{notary_key_1}}
   NOTARY_FILE_2: {{notary_file_2}}
   NOTARY_KEY_2: {{notary_key_2}}
+  NOTARY_PASS_1: {{notary_pass_1}}
+  NOTARY_PASS_2: {{notary_pass_2}}
 groups:
 
 - name: Image-Pipeline
