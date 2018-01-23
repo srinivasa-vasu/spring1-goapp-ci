@@ -11,7 +11,7 @@ curl -L https://raw.githubusercontent.com/jgsqware/clairctl/master/install.sh | 
 
 export CLAIR_CONFIG=$HOME/clairctl.yml
 echo "clair:" > $CLAIR_CONFIG
-echo "  healthPort: $CLAIR_HEALTH_PORT" >> $CLAIR_CONFIG
+#echo "  healthPort: $CLAIR_HEALTH_PORT" >> $CLAIR_CONFIG
 echo "  uri: $CLAIR_URL" >> $CLAIR_CONFIG
 echo "  report:" >> $CLAIR_CONFIG
 echo "    format: html" >> $CLAIR_CONFIG
