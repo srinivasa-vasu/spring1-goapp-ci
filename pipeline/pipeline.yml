@@ -1,6 +1,6 @@
 ---
 clair_scan_params: &clair_scan_params
-  CLAIR_URL: {{HARBOR_URL}}
+  CLAIR_URL: {{HARBOR_URL}}/clair
   CLAIR_PORT: {{CLAIR_PORT}}
   CLAIR_HEALTH_PORT: {{CLAIR_HEALTH_PORT}}
   CLAIR_IMAGE: {{APP_IMAGE}}
