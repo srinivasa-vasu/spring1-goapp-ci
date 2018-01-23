@@ -33,7 +33,7 @@ resource_types:
 - name: kubernetes
   type: docker-image
   source:
-    repository: jcderr/concourse-kubernetes-resource
+    repository: virtmerlin/concourse-kubernetes-resource
 
 resources:
 - name: git-spring1-ci
@@ -45,7 +45,8 @@ resources:
 - name: git-go-http
   type: git
   source:
-    uri: https://github.com/tkrausjr/go-http
+    #uri: https://github.com/tkrausjr/go-http
+    uri: https://github.com/srinivasa-vasu/spring-music
     branch: master
 
 - name: harbor-image
@@ -65,10 +66,12 @@ resources:
     cluster_url: {{K8S_CLUSTER_URL}}
     namespace: {{K8S_NAMESPACE}}
     cluster_ca: {{K8S_CA_BASE64}}
-    admin_cert: {{K8S_ADMIN_CERT}}
-    admin_key: {{K8S_ADMIN_TOKEN}}
+    admin_user: {{K8S_ADMIN_USER}}
+    admin_token: {{K8S_ADMIN_TOKEN}}
     resource_type: deployment
     resource_name: go-http
+    resource_port: 8080
+    overwrite: true
 
 - name: kubernetes-service
   type: kubernetes
@@ -76,8 +79,8 @@ resources:
     cluster_url: {{K8S_CLUSTER_URL}}
     namespace: {{K8S_NAMESPACE}}
     cluster_ca: {{K8S_CA_BASE64}}
-    admin_cert: {{K8S_ADMIN_CERT}}
-    admin_key: {{K8S_ADMIN_TOKEN}}
+    admin_user: {{K8S_ADMIN_USER}}
+    admin_token: {{K8S_ADMIN_TOKEN}}
     resource_type: service
     resource_name: svc-go-http
     overwrite: true
@@ -125,12 +128,16 @@ jobs:
   plan:
   - get: harbor-image
     passed: [cve-scan-harbor-image]
-    trigger: true
+    trigger: false
   - put: kubernetes-deployment
     params:
       image_name: {{REPO_URL}}
-      image_tag: "0.1"
+      image_tag: 0.1
+      port: 8080
   - put: kubernetes-service
     params:
-      image_name: {{REPO_URL}}
-      image_tag: "0.1"
+      service_name: svc-go-http
+      service_type: NodePort
+      deployment_name: go-http
+      service_port: 30001
+      target_port: 8080
