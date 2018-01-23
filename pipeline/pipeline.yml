@@ -55,7 +55,7 @@ resources:
     username: {{HARBOR_USERNAME}}
     password: {{HARBOR_PASSWORD}}
     repository: {{REPO_URL}}
-    tag: 0.1
+    tag: {{APP_TAG_VERSION}}
     insecure_registries:
     - {{REPO_INSECURE_REGISTRY}}
     ca_certs: {{HARBOR_CA_CERT}}
