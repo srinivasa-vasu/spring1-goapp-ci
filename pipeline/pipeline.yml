@@ -69,7 +69,7 @@ resources:
     admin_user: {{K8S_ADMIN_USER}}
     admin_token: {{K8S_ADMIN_TOKEN}}
     resource_type: deployment
-    resource_name: go-http
+    resource_name: spring-music
     resource_port: 8080
     overwrite: true
 
@@ -82,7 +82,7 @@ resources:
     admin_user: {{K8S_ADMIN_USER}}
     admin_token: {{K8S_ADMIN_TOKEN}}
     resource_type: service
-    resource_name: svc-go-http
+    resource_name: spring-music-svc
     overwrite: true
 
 jobs:
@@ -132,12 +132,11 @@ jobs:
   - put: kubernetes-deployment
     params:
       image_name: {{REPO_URL}}
-      image_tag: 0.1
+      image_tag: {{APP_TAG_VERSION}}
       port: 8080
   - put: kubernetes-service
     params:
-      service_name: svc-go-http
+      service_name: spring-music-svc
       service_type: NodePort
-      deployment_name: go-http
-      service_port: 30001
+      deployment_name: spring-music
       target_port: 8080
