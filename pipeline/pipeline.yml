@@ -3,7 +3,7 @@ clair_scan_params: &clair_scan_params
   CLAIR_URL: {{CLAIR_URL}}
   CLAIR_PORT: {{CLAIR_PORT}}
   CLAIR_HEALTH_PORT: {{CLAIR_HEALTH_PORT}}
-  CLAIR_IMAGE: {{APP_IMAGE}}
+  CLAIR_IMAGE: {{APP_REPO_IMAGE}}
   CLAIR_INSECURE_REGISTRY: {{REPO_INSECURE_REGISTRY}}
   HARBOR_USERNAME: {{HARBOR_USERNAME}}
   HARBOR_PASSWORD: {{HARBOR_PASSWORD}}
@@ -30,10 +30,10 @@ groups:
 
 
 resource_types:
-- name: kubernetes
+- name: k8s
   type: docker-image
   source:
-    repository: virtmerlin/concourse-kubernetes-resource
+    repository: srinivasavasu/concourse-k8s
 
 resources:
 - name: git-spring1-ci
@@ -61,29 +61,25 @@ resources:
     ca_certs: {{HARBOR_CA_CERT}}
     
 - name: kubernetes-deployment
-  type: kubernetes
+  type: k8s
   source:
     cluster_url: {{K8S_CLUSTER_URL}}
     namespace: {{K8S_NAMESPACE}}
     cluster_ca: {{K8S_CA_BASE64}}
     admin_user: {{K8S_ADMIN_USER}}
     admin_token: {{K8S_ADMIN_TOKEN}}
-    resource_type: deployment
-    resource_name: spring-music
-    resource_port: 8080
-    overwrite: true
-
-- name: kubernetes-service
-  type: kubernetes
-  source:
-    cluster_url: {{K8S_CLUSTER_URL}}
-    namespace: {{K8S_NAMESPACE}}
-    cluster_ca: {{K8S_CA_BASE64}}
-    admin_user: {{K8S_ADMIN_USER}}
-    admin_token: {{K8S_ADMIN_TOKEN}}
-    resource_type: service
-    resource_name: spring-music-svc
-    overwrite: true
+#- name: kubernetes-service
+#  type: kubernetes
+#  source:
+#    cluster_url: {{K8S_CLUSTER_URL}}
+#    #namespace: {{K8S_NAMESPACE}}
+#    cluster_ca: {{K8S_CA_BASE64}}
+#    admin_user: {{K8S_ADMIN_USER}}
+#    admin_token: {{K8S_ADMIN_TOKEN}}
+#    resource_type: service
+#    resource_name: spring-music
+#    resource_port: 8080
+#    overwrite: true
 
 jobs:
 - name: build-docker-image
@@ -128,15 +124,48 @@ jobs:
   plan:
   - get: harbor-image
     passed: [cve-scan-harbor-image]
-    trigger: false
+    trigger: true
   - put: kubernetes-deployment
     params:
+      resource_type: deployment
+      resource_name: spring-music
       image_name: {{REPO_URL}}
       image_tag: {{APP_TAG_VERSION}}
-      port: 8080
-  - put: kubernetes-service
+#      env_values:
+#      - name: SPRING_PROFILES_ACTIVE
+#        value: prod
+#      - name: SPRING_DATA_MONGODB_DATABASE
+#        value: app1
+#      - name: SPRING_DATA_MONGODB_URI
+#        value: "mongodb://app1-mongodb-0.app1-mongodb.bbase:27017"
+#      - name: JAVA_OPTS
+#        value: " -Xmx256m -Xms256m"
+#      command:
+#      - "/bin/sh"
+#      - "-c"
+#      - "echo 'hello thr'"
+      port_values:
+      - name: web
+        containerPort: "8080"
+#      readiness_probe:
+#        httpGet:
+#          path: /management/health
+#          port: web
+#  - put: kubernetes-deployment
+#    params:
+#      resource_type: configmap
+#      resource_name: spring-music
+#      config_data:
+#        game-properties-file-name: game.properties
+#        game.properties: |
+#          enemies=aliens
+#          lives=3
+  - put: kubernetes-deployment
     params:
-      service_name: spring-music-svc
-      service_type: NodePort
-      deployment_name: spring-music
-      target_port: 8080
+      resource_type: service
+      resource_name: spring-music
+      port_values:
+      - name: web
+        port: "8080"
+        targetPort: "8080"
+            
