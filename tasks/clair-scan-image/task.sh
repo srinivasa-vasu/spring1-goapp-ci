@@ -26,7 +26,7 @@ clairctl --config $CLAIR_CONFIG health
 
 # Scan the image
 
-export HIGH=$(clairctl --config $CLAIR_CONFIG --log-level Debug analyze $CLAIR_IMAGE | tee /dev/stderr | grep High | awk '{print$2}')
+export HIGH=$(sudo clairctl --config $CLAIR_CONFIG --log-level Debug analyze $CLAIR_IMAGE | tee /dev/stderr | grep High | awk '{print$2}')
 
 
 if [[ $HIGH -lt 1 ]]; then
