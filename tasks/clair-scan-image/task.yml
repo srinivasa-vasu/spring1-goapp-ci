@@ -17,7 +17,7 @@ params:
 
 
 inputs:
-  - name: git-spring1-ci
+  - name: git-src-repo
 
 run:
-  path: git-spring1-ci/tasks/clair-scan-image/task.sh
+  path: git-src-repo/tasks/clair-scan-image/task.sh

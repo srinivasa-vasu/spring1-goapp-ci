@@ -17,7 +17,7 @@ params:
   NOTARY_ROOT_PASS:
 
 inputs:
-  - name: git-spring1-ci
+  - name: git-src-repo
 
 run:
-  path: git-spring1-ci/tasks/notary-sign-image/task.sh
+  path: git-src-repo/tasks/notary-sign-image/task.sh
