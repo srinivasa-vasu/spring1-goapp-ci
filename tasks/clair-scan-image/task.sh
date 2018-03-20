@@ -11,7 +11,7 @@ curl -L https://raw.githubusercontent.com/jgsqware/clairctl/master/install.sh | 
 
 export CLAIR_CONFIG=$HOME/clairctl.yml
 echo "clair:" > $CLAIR_CONFIG
-#echo "  healthPort: $CLAIR_HEALTH_PORT" >> $CLAIR_CONFIG
+echo "  healthPort: $CLAIR_HEALTH_PORT" >> $CLAIR_CONFIG
 echo "  uri: $CLAIR_URL" >> $CLAIR_CONFIG
 echo "  report:" >> $CLAIR_CONFIG
 echo "    format: html" >> $CLAIR_CONFIG
@@ -25,8 +25,8 @@ echo "  insecureSkipVerify: $CLAIR_SSL_VERIFY" >> $CLAIR_CONFIG
 clairctl --config $CLAIR_CONFIG health
 
 # Scan the image
-
-export HIGH=$(sudo clairctl --config $CLAIR_CONFIG --log-level Debug analyze $CLAIR_IMAGE | tee /dev/stderr | grep High | awk '{print$2}')
+docker login $HARBOR_URL:443 -u $HARBOR_USERNAME -p HARBOR_PASSWORD
+export HIGH=$(clairctl --config $CLAIR_CONFIG --log-level Debug analyze $CLAIR_IMAGE | tee /dev/stderr | grep High | awk '{print$2}')
 
 
 if [[ $HIGH -lt 1 ]]; then
