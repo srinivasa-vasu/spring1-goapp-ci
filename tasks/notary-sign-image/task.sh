@@ -3,8 +3,8 @@ set -e
 
 source /opt/resource/common.sh
 
-export DOCKER_CONTENT_TRUST=1
-export DOCKER_CONTENT_TRUST_SERVER="https://$HARBOR_URL:4443"
+#export DOCKER_CONTENT_TRUST=1
+#export DOCKER_CONTENT_TRUST_SERVER="https://$HARBOR_URL:4443"
 
 
 function fn_decode {
