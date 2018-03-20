@@ -25,7 +25,6 @@ echo "  insecureSkipVerify: $CLAIR_SSL_VERIFY" >> $CLAIR_CONFIG
 clairctl --config $CLAIR_CONFIG health
 
 # Scan the image
-docker login $HARBOR_URL:443 -u $HARBOR_USERNAME -p HARBOR_PASSWORD
 export HIGH=$(clairctl --config $CLAIR_CONFIG --log-level Debug analyze $CLAIR_IMAGE | tee /dev/stderr | grep High | awk '{print$2}')
 
 

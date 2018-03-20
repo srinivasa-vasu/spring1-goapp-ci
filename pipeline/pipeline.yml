@@ -36,7 +36,7 @@ resource_types:
     repository: srinivasavasu/concourse-k8s
 
 resources:
-- name: git-spring1-ci
+- name: git-src-repo
   type: git
   source:
     uri: https://github.com/srinivasa-vasu/spring1-goapp-ci.git
@@ -87,7 +87,7 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - get: git-spring1-ci
+    - get: git-src-repo
       trigger: true
     - get: git-go-http
       trigger: true
@@ -98,24 +98,24 @@ jobs:
 - name: cve-scan-harbor-image
   plan:
   - aggregate:
-    - get: git-spring1-ci
+    - get: git-src-repo
     - get: harbor-image
       passed: [build-docker-image]
       trigger: true
   - task: clair-scan-image
-    file: git-spring1-ci/tasks/clair-scan-image/task.yml
+    file: git-src-repo/tasks/clair-scan-image/task.yml
     params: *clair_scan_params
 
 - name: sign-harbor-image
   plan:
   - aggregate:
-    - get: git-spring1-ci  
+    - get: git-src-repo  
     - get: harbor-image
       passed: [cve-scan-harbor-image]
       trigger: true
   - task: notary-sign-image
     privileged: true
-    file: git-spring1-ci/tasks/notary-sign-image/task.yml
+    file: git-src-repo/tasks/notary-sign-image/task.yml
     params: *notary_sign_params
 
 - name: k8s-deployment
