@@ -19,7 +19,7 @@ echo "docker:" >> $CLAIR_CONFIG
 echo "  insecure-registries:" >> $CLAIR_CONFIG
 echo "  - \"$CLAIR_INSECURE_REGISTRY\"" >> $CLAIR_CONFIG
 echo "auth:" >> $CLAIR_CONFIG
-echo "  insecureSkipVerify:" >> $CLAIR_SSL_VERIFY
+echo "  insecureSkipVerify: $CLAIR_SSL_VERIFY" >> $CLAIR_CONFIG
 
 
 clairctl --config $CLAIR_CONFIG health
