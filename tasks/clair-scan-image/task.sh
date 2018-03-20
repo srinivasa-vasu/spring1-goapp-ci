@@ -21,7 +21,7 @@ echo "  - \"$CLAIR_INSECURE_REGISTRY\"" >> $CLAIR_CONFIG
 echo "auth:" >> $CLAIR_CONFIG
 echo "  insecureSkipVerify: $CLAIR_SSL_VERIFY" >> $CLAIR_CONFIG
 
-
+docker login $HARBOR_URL:443 -u $HARBOR_USERNAME -p $HARBOR_PASSWORD
 clairctl --config $CLAIR_CONFIG health
 
 # Scan the image
